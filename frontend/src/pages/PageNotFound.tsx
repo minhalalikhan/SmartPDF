@@ -5,7 +5,7 @@ type Props = {};
 function PageNotFound({}: Props) {
   return (
     <div className="w-full h-full flex items-center justify-center gap-7 flex-col">
-      <h1 className="text-gray-400">404 - Page Not Found</h1>
+      <h1 className="text-gray-400">404 - Page Not Found </h1>
       <p className="text-gray-500">
         The page you are looking for does not exist.
       </p>

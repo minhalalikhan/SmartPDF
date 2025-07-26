@@ -1,9 +1,129 @@
+import { usePDFStore } from "@/store/pdfstore";
+import { useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import CircularProgress from "@mui/material/CircularProgress";
+
 type Props = {};
 
 function UploadHandler({}: Props) {
+  const [error, setError] = useState<string | null>(null);
+
+  const {
+    clearPDF,
+    pdfFile,
+    setPDF,
+    uploadError,
+    uploadProgress,
+    uploadSuccess,
+    uploading,
+  } = usePDFStore();
+
+  const onDrop = useCallback((acceptedFiles: File[], fileRejections: any[]) => {
+    setError(null);
+    clearPDF();
+    if (fileRejections.length > 0) {
+      const rejection = fileRejections[0];
+      if (rejection?.errors?.length > 0) {
+        const message = rejection.errors[0].message;
+        setError(`Upload failed: ${message}`);
+        return;
+      }
+    }
+
+    if (acceptedFiles.length > 1) {
+      setError("Only one file is allowed.");
+      return;
+    }
+
+    const thispdfFile = acceptedFiles[0];
+
+    if (thispdfFile && thispdfFile.type !== "application/pdf") {
+      setError("Only PDF files are allowed.");
+      return;
+    }
+
+    setPDF(thispdfFile);
+  }, []);
+
+  function cancelUpload(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
+    clearPDF();
+    setError(null);
+  }
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: false,
+    accept: { "application/pdf": [".pdf"] },
+    maxFiles: 1,
+  });
+
   return (
-    <div className="upload-container ">
-      <h3 className="font-bold">Upload your PDF</h3>
+    <div
+      {...getRootProps()}
+      className={`upload-container border-2 border-dashed rounded-md p-4 cursor-pointer transition ${
+        isDragActive ? "border-blue-400 bg-blue-50" : "border-gray-300"
+      }`}
+    >
+      <input {...getInputProps()} />
+      <h3 className="font-bold text-lg mb-2">Upload your PDF</h3>
+
+      {!pdfFile && !error && (
+        <>
+          <p className="text-sm text-gray-500 text-center mt-[100px]">
+            Click here to upload a file or drag and drop your PDF into this area
+          </p>
+        </>
+      )}
+
+      {uploadSuccess && (
+        <div className="mt-[70px] text-center text-sm text-gray-500 flex flex-col items-center gap-[10px]">
+          <p>Your Smart PDF is ready ! </p>
+          <button className="bg-red-500 text-white rounded-[20px] text-[18px]  px-4 py-1.5">
+            check Smart PDF
+          </button>
+          <div className="gap-[10px] flex justify-center items-center">
+            <button
+              className="border-red-500 border-2 cursor-pointer rounded-[20px] px-4 py-1.5"
+              onClick={cancelUpload}
+            >
+              cancel
+            </button>
+            <button className="border-red-500 border-2 cursor-pointer rounded-[20px] px-4 py-1.5">
+              replace
+            </button>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-[100px] text-center text-sm text-gray-500 ">
+          <p className=" text-red-600 text-sm text-center"> {error}</p>
+          <p className="text-sm text-gray-500 text-center">
+            Click here to upload a file or drag and drop your PDF into this area
+          </p>
+        </div>
+      )}
+
+      {uploading && (
+        <div className="mt-[100px] text-center flex flex-col items-center gap-[10px]">
+          <p className="text-sm text-gray-500 mb-2">Uploading...</p>
+          <CircularProgress
+            value={50}
+            sx={{ color: "red" }}
+            variant="determinate"
+          />
+        </div>
+      )}
+
+      {uploadError && !error && (
+        <div className="mt-[100px] text-center text-sm text-gray-500 ">
+          <p className=" text-red-600 text-sm text-center">Upload failed</p>
+          <p className="text-sm text-gray-500 text-center ">
+            Click here to upload a file or drag and drop your PDF into this area
+          </p>
+        </div>
+      )}
     </div>
   );
 }
