@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios, { type AxiosResponse } from "axios";
+import { useUserStore } from "@/store/UserStore";
 
 type PDFStore = {
   pdfFile: File | null;
@@ -7,6 +8,7 @@ type PDFStore = {
   uploading: boolean;
   uploadProgress: number;
   uploadSuccess: boolean;
+  docID: string | null;
   uploadError: string | null;
   setPDF: (file: File) => void;
   clearPDF: () => void;
@@ -15,6 +17,7 @@ type PDFStore = {
 export const usePDFStore = create<PDFStore>((set) => ({
   pdfFile: null,
   pdfUrl: null,
+  docID: null,
   uploading: false,
   uploadProgress: 0,
   uploadSuccess: false,
@@ -49,6 +52,7 @@ export const usePDFStore = create<PDFStore>((set) => ({
       set({
         uploading: false,
         pdfFile:file,
+          docID: null, // update this if your API returns a docID
         pdfUrl:blobUrl,
         uploadSuccess: true,
         uploadError: null,
@@ -64,15 +68,26 @@ export const usePDFStore = create<PDFStore>((set) => ({
     }
   },
 
-  clearPDF: () =>
+  clearPDF: () =>{
+
+    const userID=useUserStore.getState().userID
+// call api to clear PDF data
+
+
+      const response =  axios.get("http://localhost:4000/api/clearPDF",  {
+        params: { userID },  
+      });
+
     set({
       pdfFile: null,
       pdfUrl: null,
+      docID: null,
       uploading: false,
       uploadProgress: 0,
       uploadSuccess: false,
       uploadError: null,
-    }),
+    })
+  }
 }));
 
 

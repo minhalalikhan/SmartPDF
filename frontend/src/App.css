@@ -7,10 +7,22 @@
   margin-bottom: 20px;
 
   border-radius: 28px;
-  background: #242424;
-  box-shadow: 7px 7px 11px #181818, -7px -7px 11px #303030;
+
+  box-shadow: 6px 6px 19px #828282, -6px -6px 19px #ffffff;
 
   padding: 20px;
   flex-direction: column;
   align-items: center;
+}
+
+.notification {
+  width: 90%;
+  align-self: center;
+  box-shadow: 4px 7px 10px 0px rgb(90, 224, 173);
+}
+
+.notification-alert {
+  width: 90%;
+  align-self: center;
+  box-shadow: 4px 7px 10px 0px rgb(224, 90, 90);
 }
