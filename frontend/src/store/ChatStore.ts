@@ -2,7 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 import { useUserStore } from "@/store/UserStore";
 
-const backend_url = import.meta.env.BACKEND_URL
+const backend_url = import.meta.env.VITE_BACKEND_URL
 
 type Message = {
     id: string;
