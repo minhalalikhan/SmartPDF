@@ -2,6 +2,10 @@ import { create } from "zustand";
 import axios from "axios";
 import { useUserStore } from "@/store/UserStore";
 
+
+
+const backend_url = import.meta.env.BACKEND_URL
+
 type PDFStore = {
   pdfFile: File | null;
   pdfUrl: string | null;
@@ -46,7 +50,7 @@ export const usePDFStore = create<PDFStore>((set) => ({
 
 
 
-      await axios.post("http://localhost:4000/api/pdf/upload", formData, {
+      await axios.post(backend_url + "/api/pdf/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -85,7 +89,7 @@ export const usePDFStore = create<PDFStore>((set) => ({
     // call api to clear PDF data
 
 
-    axios.get("http://localhost:4000/api/pdf/clear", {
+    axios.get(backend_url + "/api/pdf/clear", {
       params: { userID },
     });
 

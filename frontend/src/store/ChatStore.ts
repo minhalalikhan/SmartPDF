@@ -2,6 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 import { useUserStore } from "@/store/UserStore";
 
+const backend_url = import.meta.env.BACKEND_URL
 
 type Message = {
     id: string;
@@ -48,7 +49,7 @@ export const useChatStore = create<ChatStore>((set) => ({
 
         const userID = useUserStore.getState().userID
         try {
-            const response = await axios.get("http://localhost:4000/api/ask", {
+            const response = await axios.get(backend_url + "/api/ask", {
 
                 headers: {
                     "Content-Type": "application/json",

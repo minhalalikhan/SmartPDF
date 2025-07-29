@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
+const backend_url = import.meta.env.BACKEND_URL
 
 type UserStore = {
   userID: string | null,
@@ -25,7 +26,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
     //  call api to clear user data
 
-    axios.get("http://localhost:4000/api/pdf/clear", {
+    axios.get(backend_url + "/api/pdf/clear", {
       params: { userID: get().userID },
     });
 
