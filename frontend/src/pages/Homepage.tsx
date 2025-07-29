@@ -1,5 +1,3 @@
-import React from "react";
-
 import UploadHandler from "@/components/UploadHandler";
 
 type Props = {};

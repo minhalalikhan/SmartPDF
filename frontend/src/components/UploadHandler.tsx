@@ -24,7 +24,6 @@ function UploadHandler({}: Props) {
   const onDrop = useCallback((acceptedFiles: File[], fileRejections: any[]) => {
     setError(null);
 
-    clearPDF();
     if (fileRejections.length > 0) {
       const rejection = fileRejections[0];
       if (rejection?.errors?.length > 0) {
@@ -81,23 +80,11 @@ function UploadHandler({}: Props) {
       <input {...getInputProps()} />
       <h3 className="font-bold text-lg mb-2">Upload your PDF</h3>
 
-      {!pdfFile && !error && (
+      {!pdfFile && !error && !uploadError && !uploading && (
         <>
           <p className="text-sm text-gray-500 text-center mt-[100px]">
             Click here to upload a file or drag and drop your PDF into this area
           </p>
-          {/* <p className="text-sm text-gray-500 mb-2">Uploading...{50}%</p>
-          <CircularProgress
-            value={50}
-            sx={{ color: "blue", width: "100px", height: "100px" }}
-            variant="determinate"
-          />
-          <button
-            className="border-red-500 border-2 cursor-pointer rounded-[20px] px-4 py-1.5"
-            onClick={cancelUpload}
-          >
-            remove
-          </button> */}
         </>
       )}
 

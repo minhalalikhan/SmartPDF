@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios, { type AxiosResponse } from "axios";
+import axios from "axios";
 import { useUserStore } from "@/store/UserStore";
 
 type PDFStore = {
@@ -37,10 +37,21 @@ export const usePDFStore = create<PDFStore>((set) => ({
     try {
       const formData = new FormData();
       formData.append("file", file);
+      const UserID = useUserStore.getState().userID;
 
-      const response = await axios.post("http://localhost:4000/api/upload", formData, {
+      if (!UserID) {
+        throw new Error("User ID is not set");
+      }
+
+
+
+
+      await axios.post("http://localhost:4000/api/pdf/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+        },
+        params: {
+          userID: UserID,
         },
         onUploadProgress: (progressEvent) => {
           const progress = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
@@ -51,9 +62,9 @@ export const usePDFStore = create<PDFStore>((set) => ({
       // Handle success
       set({
         uploading: false,
-        pdfFile:file,
-          docID: null, // update this if your API returns a docID
-        pdfUrl:blobUrl,
+        pdfFile: file,
+        docID: null, // update this if your API returns a docID
+        pdfUrl: blobUrl,
         uploadSuccess: true,
         uploadError: null,
       });
@@ -68,15 +79,15 @@ export const usePDFStore = create<PDFStore>((set) => ({
     }
   },
 
-  clearPDF: () =>{
+  clearPDF: () => {
 
-    const userID=useUserStore.getState().userID
-// call api to clear PDF data
+    const userID = useUserStore.getState().userID
+    // call api to clear PDF data
 
 
-      const response =  axios.get("http://localhost:4000/api/clearPDF",  {
-        params: { userID },  
-      });
+    axios.get("http://localhost:4000/api/pdf/clear", {
+      params: { userID },
+    });
 
     set({
       pdfFile: null,
@@ -91,89 +102,3 @@ export const usePDFStore = create<PDFStore>((set) => ({
 }));
 
 
-// /////
-
-
-
-// import { v4 as uuid } from 'uuid';
-// import axios from 'axios';
-// import type { AxiosError } from "axios";
-
-// export const useChatStore = create((set, get) => ({
-//   // Core state
-//   messages: [],
-//   docId: null,
-//   numPages: 0,
-//   activePage: null,
-
-//   // API state
-//   loadingUpload: false,
-//   loadingAsk: false,
-//   error: null,
-
-//   // Upload PDF
-//   uploadPdf: async (file:File) => {
-//     set({ loadingUpload: true, error: null });
-//     try {
-//       const formData = new FormData();
-//       formData.append('pdf', file);
-
-//       const res = await axios.post('/upload', formData);
-//       const { docId, numPages } = res.data;
-
-//       set({ docId, numPages });
-//     } catch (err:AxiosError) {
-//       set({ error: err.message || 'Upload failed' });
-//     } finally {
-//       set({ loadingUpload: false });
-//     }
-//   },
-
-//   // Ask a question
-//   askQuestion: async (text:) => {
-//     const { docId, messages } = get();
-//     if (!docId) return;
-
-//     set({ loadingAsk: true, error: null });
-
-//     // Optimistically add user message
-//     const userMsg = { id: uuid(), role: 'user', text };
-//     set({ messages: [...messages, userMsg] });
-
-//     try {
-//       const res = await axios.post('/ask', { docId, question: text });
-//       const botMsg = {
-//         id: uuid(),
-//         role: 'bot',
-//         text: res.data.answer,
-//         citations: res.data.citations
-//       };
-
-//       set((state) => ({
-//         messages: [...state.messages, botMsg]
-//       }));
-//     } catch (err) {
-//       set({ error: err.message || 'Failed to get response' });
-//     } finally {
-//       set({ loadingAsk: false });
-//     }
-//   },
-
-//   // Clear session
-//   reset: () => set({
-//     messages: [],
-//     docId: null,
-//     numPages: 0,
-//     activePage: null,
-//     error: null,
-//     loadingUpload: false,
-//     loadingAsk: false
-//   }),
-
-//   // Scroll to citation
-//   scrollToPage: (pageNum) => {
-//     set({ activePage: pageNum });
-//     const el = document.getElementById(`page-${pageNum}`);
-//     if (el) el.scrollIntoView({ behavior: 'smooth' });
-//   }
-// }));

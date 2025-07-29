@@ -1,39 +1,39 @@
 import { create } from "zustand";
-import axios, { type AxiosResponse } from "axios";
+import axios from "axios";
 
 
 type UserStore = {
- userID:string|null,
- setUser: (i:string) => void,
- removeUser: () => void,
+  userID: string | null,
+  setUser: (i: string) => void,
+  removeUser: () => void,
 };
 
-export const useUserStore = create<UserStore>((set,get) => ({
-userID:null,
+export const useUserStore = create<UserStore>((set, get) => ({
+  userID: null,
 
-  setUser: async (uuid:string) => {
-   
+  setUser: async (uuid: string) => {
+
     set({
-     userID: uuid,
+      userID: uuid,
     });
 
-  
+
   },
 
-  removeUser: () =>{
+  removeUser: () => {
 
 
     //  call api to clear user data
 
-      const response =  axios.get("http://localhost:4000/api/removeuser",  {
-        params: { userID:get().userID },  
-      });
+    axios.get("http://localhost:4000/api/pdf/clear", {
+      params: { userID: get().userID },
+    });
 
-    
 
-     set({
+
+    set({
       userID: null,
     })
   },
-   
+
 }));

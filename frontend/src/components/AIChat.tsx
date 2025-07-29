@@ -60,6 +60,7 @@ function AIChat({ checkpageref }: Props) {
           return (
             <AIMessage
               message={message.content}
+              key={index}
               checkpageref={checkpageref}
               citations={message.citations}
             />
@@ -110,8 +111,8 @@ function MessageInput() {
         onClick={onMessageSend}
         className={`rounded-3xl  ${
           disabled
-            ? " bg-gray-300"
-            : "cursor-pointer bg-gray-500 :hover:bg-gray-400"
+            ? " opacity-50"
+            : "cursor-pointer bg-gray-300 hover:bg-gray-200"
         } p-2  transition-colors `}
       >
         <img src={sendIcon} style={{ width: "24px", height: "24px" }} />
@@ -141,7 +142,7 @@ const ThinkingDots = () => {
 
 function UserMessage({ message }: { message: string }) {
   return (
-    <div className="rounded-4xl px-3 py-2 bg-[#474747] max-w-2/3 self-end">
+    <div className="rounded-4xl px-3 py-2 bg-gray-900 text-white max-w-2/3 self-end">
       {message}
     </div>
   );
@@ -164,7 +165,7 @@ function AIMessage({
           <button
             key={pageNumber}
             onClick={() => checkpageref(pageNumber)}
-            className="text-blue-500 hover:underline"
+            className="px-2 py-1 rounded-2xl bg-violet-500 text-white hover:bg-violet-700"
           >
             Page {pageNumber}
           </button>

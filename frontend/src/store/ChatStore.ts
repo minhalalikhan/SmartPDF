@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import axios from "axios";
+import { useUserStore } from "@/store/UserStore";
 
 
 type Message = {
@@ -21,15 +23,15 @@ type ChatStore = {
 }
 
 
-export const useChatStore = create<ChatStore>((set, get) => ({
+export const useChatStore = create<ChatStore>((set) => ({
 
     thinking: false,
     ResponseStatus: 'INIT',
     messages: [],
     askQuestion: async (question: string) => {
         const newMessage: Message = {
-            //   id: crypto.randomUUID(),
-            id: "",
+
+            id: Date.now().toString(),
             content: question,
             sender: "user",
             timestamp: new Date(),
@@ -43,27 +45,32 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         }));
 
         // Simulate API call
+
+        const userID = useUserStore.getState().userID
         try {
-            const response = await fetch("http://localhost:4000/api/ask", {
-                method: "POST",
+            const response = await axios.get("http://localhost:4000/api/ask", {
+
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ question }),
+                params: {
+                    userID,
+                    question
+                }
+
             });
 
-            if (!response.ok)
-                throw new Error("Network response was not ok");
 
 
-
-            const data = await response.json();
+            const data = await response.data;
             const botMessage: Message = {
-                id: crypto.randomUUID(),
+                id: Date.now().toString(),
                 content: data.answer,
+
                 sender: "bot",
                 timestamp: new Date(),
                 citations: data.citations || [],
+
             };
 
             set((state) => ({
