@@ -39,7 +39,7 @@ PDFrouter.use(express.static(UPLOAD_DIR));
 
 
 PDFrouter.post("/upload",
-    // upload.single("file"),
+    upload.single("file"),
     async (req, res) => {
         if (!req.file) {
             return res.status(400).json({ message: "No file uploaded" });
